@@ -1,0 +1,95 @@
+# Ejercicio 016: Motor de Evaluación de Nodos y Control de Colas de Animación
+
+## Análisis del Problema
+
+El objetivo es desarrollar un componente de software para un pipeline gráfico que evalúe el estado operacional de los nodos de una escena de animación, aplicando prioridades dinámicas para detener o desviar el flujo de renderizado ante cualquier bloqueo técnico en la cola de procesamiento.
+
+* **Entrada:** Un objeto contenedor con la siguiente firma:
+    * `items`: Array de Strings (Estados operacionales de los nodos gráficos: `"aprobado"`, `"pendiente"`, `"bloqueado"`).
+    * `prioridad`: String (Nivel de atención en el pipeline del entorno: `"alta"`, `"media"`, `"baja"`).
+    * `regla`: String (Directriz de negocio activa para la cola de animación, ej: `"revisar bloqueados primero"`).
+* **Proceso:** 1. Validar inicialmente mediante cláusulas de guarda que el arreglo de estados contenga datos válidos para evitar excepciones en la lectura de memoria.
+    2. Estandarizar todas las cadenas de entrada a minúsculas (`.toLowerCase()`) para realizar comparaciones estrictas sin fallos de formato.
+    3. Verificar la coexistencia de la regla prioritaria con un estado `"bloqueado"` dentro del set de datos.
+    4. Evaluar la presencia de estados secundarios como `"pendiente"` si no se detectan bloqueos de nivel crítico.
+* **Salida:** Un objeto con la estructura estricta: `{ accion: string, motivo: string }`.
+
+---
+
+## Reglas de Negocio
+
+1. **Interrupción por Nodo Bloqueado:** Si la `prioridad` asignada a la escena es `"alta"`, la `regla` es exactamente `"revisar bloqueados primero"` y se encuentra al menos un nodo `"bloqueado"`, el motor gráfico interrumpe el flujo ordinario y devuelve la acción `"revisar bloqueado"`.
+2. **Plan de Contingencia Preventivo:** Si el pipeline no presenta bloqueos de nivel crítico pero contiene elementos en estado `"pendiente"`, se desvía la operación activando la acción `"pre-renderizar fotogramas"`.
+3. **Parada Controlada por Vacío (Caso Borde):** Ante la ausencia total de elementos dentro de la matriz de entrada (arreglo vacío), la escena debe detenerse controladamente devolviendo la acción `"reiniciar escena"`.
+
+---
+
+## Casos de Prueba
+
+### 1. Interrupción por Bloqueo en Pipeline (Caso Normal)
+* **Entrada:**
+    ```json
+    {
+      "items": ["aprobado", "pendiente", "bloqueado"],
+      "prioridad": "alta",
+      "regla": "revisar bloqueados primero"
+    }
+    ```
+* **Resultado esperado:**
+    ```json
+    {
+      "accion": "revisar bloqueado",
+      "motivo": "Se detectaron nodos gráficos bloqueados bajo alerta de alta prioridad. Flujo de animación pausado."
+    }
+    ```
+
+### 2. Derivación a Pre-renderizado (Caso Alterno)
+* **Entrada:**
+    ```json
+    {
+      "items": ["aprobado", "pendiente"],
+      "prioridad": "media",
+      "regla": "revisar bloqueados primero"
+    }
+    ```
+* **Resultado esperado:**
+    ```json
+    {
+      "accion": "pre-renderizar fotogramas",
+      "motivo": "Pipeline libre de bloqueos críticos. Se procede a la pre-renderización preventiva de los nodos pendientes."
+    }
+    ```
+
+### 3. Reinicio de Escena por Falta de Datos (Caso Borde)
+* **Entrada:**
+    ```json
+    {
+      "items": [],
+      "prioridad": "alta",
+      "regla": "revisar bloqueados primero"
+    }
+    ```
+* **Resultado esperado:**
+    ```json
+    {
+      "accion": "reiniciar escena",
+      "motivo": "Matriz de entrada vacía. No existen nodos gráficos para procesar en la escena actual."
+    }
+    ```
+
+---
+
+## Arquitectura de la Solución
+
+La solución adopta el patrón de diseño de Cláusulas de Guarda (*Guard Clauses*) para sanear el flujo de control de la aplicación. Al evaluar y abortar el procesamiento al inicio de la función en caso de argumentos inválidos o colecciones vacías, evitamos el anidamiento innecesario de bloques `if/else` (*Arrow Anti-pattern*). La búsqueda de estados específicos dentro del array aprovecha métodos nativos optimizados del motor V8 de JavaScript, manteniendo una complejidad de tiempo en el peor de los casos de $O(n)$ y una estructura de código limpia, modular y mantenible.
+
+---
+
+## Ejecución del Módulo
+
+1. Asegúrate de contar con [Node.js](https://nodejs.org/) instalado en tu estación de trabajo (versión LTS recomendada).
+2. Abre la consola de comandos o terminal en el directorio raíz de este ejercicio.
+3. Ejecuta el script de la solución utilizando el comando:
+    ```bash
+    node maria-montepeque.js
+    ```

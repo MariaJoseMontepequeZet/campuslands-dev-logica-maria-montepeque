@@ -1,0 +1,4 @@
+# Ejercicio 08
+
+## Explicacion
+En el siguiente ejercicio se realiza un caso de flujo en el cual se inicia con un menu donde se nos presentan 2 opciones las cuales son las siguientes para registrar y la otra para buscar, en el si el titulo que se desea buscar esta en el array que tenemos nos dira titulo encontrado de lo contario nos dira quieres registrar la pelicula y nos saldra un formulario para registrar la pelicula.  Ademas de eso usamos lo siguiente un for para recorrer el array, un if-else para la logica, un switch para las opciones a escoger y un while true que es para repetir el menu cierta veces hasta que el valor sea false.
