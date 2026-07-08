@@ -1,0 +1,46 @@
+def calcularPuntosLiga(lpActuales, esVictoria, multiplicadorRacha, penalizacionAFK):
+    PUNTOS_BASE_VICTORIA = 20
+    PUNTOS_BASE_DERROTA = 15
+    PENALIZACION_AFK_VALOR = 10
+
+    # Control inicial si los puntos de entrada son erróneos
+    if lpActuales < 0:
+        lpActuales = 0
+
+    if esVictoria:
+        # Si estuvo AFK, se anula la ganancia de puntos
+        if penalizacionAFK:
+            puntosModificados = 0
+        else:
+            puntosModificados = PUNTOS_BASE_VICTORIA * max(1, multiplicadorRacha)
+        
+        lpFinales = lpActuales + puntosModificados
+    else:
+        # En caso de derrota se pierden puntos base
+        puntosPerdidos = PUNTOS_BASE_DERROTA
+        # Si además estuvo AFK, se le suman puntos de penalización a la pérdida
+        if penalizacionAFK:
+            puntosPerdidos += PENALIZACION_AFK_VALOR
+            
+        lpFinales = lpActuales - puntosPerdidos
+
+    # Regla de control de suelo: no se puede tener LP negativo
+    if lpFinales < 0:
+        lpFinales = 0
+
+    return lpFinales
+
+def ejecutarPruebasVideojuegos():
+    # Caso 1: Victoria normal con racha x2
+    resultadoVictoria = calcularPuntosLiga(45, True, 2, False)
+    assert resultadoVictoria == 85
+
+    # Caso 2: Derrota con penalización AFK que baja del suelo
+    resultadoDerrotaAFK = calcularPuntosLiga(12, False, 1, True)
+    assert resultadoDerrotaAFK == 0
+
+    # Caso 3: Victoria pero con reporte de inactividad (AFK)
+    resultadoVictoriaAFK = calcularPuntosLiga(50, True, 3, True)
+    assert resultadoVictoriaAFK == 50
+
+ejecutarPruebasVideojuegos()

@@ -1,0 +1,13 @@
+services:
+  campuslands-package:
+    build:
+      context: .
+      dockerfile: Dockerfile.package
+      args:
+        REPOSITORY_NAME: campuslands-dev-logica
+        REPOSITORY_URL: https://github.com/anndreloopez012/campuslands-dev-logica
+    image: ghcr.io/anndreloopez012/campuslands-dev-logica:local
+    container_name: campuslands-dev-logica-docs
+    ports:
+      - "8080:80"
+    restart: unless-stopped
