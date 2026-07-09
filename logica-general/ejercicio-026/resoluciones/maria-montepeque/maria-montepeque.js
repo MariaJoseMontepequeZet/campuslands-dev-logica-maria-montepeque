@@ -1,5 +1,4 @@
-//Busca el primer auto que cumple con la velocidad mínima requerida.
-
+///Busca el primer auto que cumple con la velocidad mínima requerida 
 function buscarAutoPorVelocidad(inventario, velocidadMinima) {
     // 1. Guardrail: Validación de entrada
     const vMin = Number(velocidadMinima);
@@ -27,6 +26,7 @@ function buscarAutoPorVelocidad(inventario, velocidadMinima) {
         };
 }
 
+// Ejemplo de prueba
 const inventario = [
     { modelo: "Bugatti Chiron", velocidadMaxima: 420 },
     { modelo: "Rimac Nevera", velocidadMaxima: 412 },

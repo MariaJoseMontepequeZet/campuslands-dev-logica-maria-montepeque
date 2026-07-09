@@ -70,4 +70,4 @@ El sistema utiliza una arquitectura declarativa. La lista de sistemas críticos 
 2. Abre la consola en el directorio raíz.
 3. Ejecuta el script de auditoría con:
    ```bash
-   node priorizacion.js
+   node maria-montepeque.js
